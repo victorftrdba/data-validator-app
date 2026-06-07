@@ -1,32 +1,32 @@
 # CLAUDE.md - data-validator-app
 
-## O que é
-Job Python que consome mensagens SQS, lê arquivos Parquet do S3, valida qualidade dos dados e envia relatórios por e-mail. Toda a infraestrutura roda localmente via LocalStack + Mailpit.
+## What it is
+Python job that consumes SQS messages, reads Parquet files from S3, validates data quality and sends reports by email. The entire infrastructure runs locally via LocalStack + Mailpit.
 
 ## Stack
 - Python 3.12, boto3, pandas 2, pyarrow, python-dotenv
-- LocalStack (emula S3 + SQS), Mailpit (captura e-mails), Kubernetes (jobs), Terraform (provisionamento local)
+- LocalStack (emulates S3 + SQS), Mailpit (captures emails), Kubernetes (jobs), Terraform (local provisioning)
 
-## Estrutura
+## Structure
 ```
-app.py             -> Entry point: orquestra SQS → S3 → validação → e-mail
-config/            -> Configurações via env vars (get_settings)
+app.py             -> Entry point: orchestrates SQS → S3 → validation → email
+config/            -> Configuration via env vars (get_settings)
 models/
-  statistics.py    -> Modelo de estatísticas de validação
+  statistics.py    -> Validation statistics model
 validators/
-  data_validator.py -> Lógica de validação de qualidade sobre DataFrames
+  data_validator.py -> Data quality validation logic over DataFrames
 services/
-  email_service.py -> Envio de relatório por e-mail (SMTP/Mailpit)
-  s3_service.py    -> Download de Parquet do S3 (LocalStack em dev)
-  sqs_service.py   -> Consumo de mensagens SQS
+  email_service.py -> Sends report by email (SMTP/Mailpit)
+  s3_service.py    -> Downloads Parquet from S3 (LocalStack in dev)
+  sqs_service.py   -> Consumes SQS messages
 utils/             -> Logger
-venv/              -> Ambiente virtual Python (não versionar)
+venv/              -> Python virtual environment (do not version)
 requirements.txt   -> boto3, pandas, numpy, pyarrow, python-dotenv
 ```
 
-## Padrões
-- Fluxo: SQS message → S3 download (Parquet) → DataValidator → Statistics → EmailService
-- Serviços isolados por responsabilidade em `services/`
-- Configuração centralizada via `config/` com `get_settings()`
-- LocalStack para desenvolvimento/testes sem custos AWS reais
-- Kubernetes Job para execução em produção
+## Patterns
+- Flow: SQS message → S3 download (Parquet) → DataValidator → Statistics → EmailService
+- Services isolated by responsibility in `services/`
+- Centralized configuration via `config/` with `get_settings()`
+- LocalStack for development/testing without real AWS costs
+- Kubernetes Job for production execution
